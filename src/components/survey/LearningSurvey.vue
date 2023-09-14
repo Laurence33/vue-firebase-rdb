@@ -21,6 +21,7 @@
           <label for="rating-great">Great</label>
         </div>
         <p v-if="invalidInput">One or more input fields are invalid. Please check your provided data.</p>
+        <p v-if="error">{{ error }}</p>
         <div>
           <base-button>Submit</base-button>
         </div>
@@ -36,6 +37,7 @@ export default {
       enteredName: '',
       chosenRating: null,
       invalidInput: false,
+      error: null
     };
   },
   // emits: ['survey-submit'],
@@ -51,6 +53,7 @@ export default {
       //   userName: this.enteredName,
       //   rating: this.chosenRating,
       // });
+      this.error = null;
       const response = await fetch(
         `${process.env.VUE_APP_FIREBASE_URL}/surveys.json`,
         {
@@ -62,7 +65,10 @@ export default {
             name: this.enteredName,
             rating: this.chosenRating
           })
-        }).then(res => res.json());
+        }).then(res => res.json())
+        .catch(() => {
+          this.error = 'Something went wrong, please try again later.';
+        })
       console.log(response);
       this.enteredName = '';
       this.chosenRating = null;
