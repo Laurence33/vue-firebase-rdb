@@ -5,7 +5,8 @@
       <div>
         <base-button @click="loadExperiences">Load Submitted Experiences</base-button>
       </div>
-      <ul>
+      <p v-if="isLoading">Loading...</p>
+      <ul v-else>
         <survey-result v-for="result in results" :key="result.id" :name="result.name"
           :rating="result.rating"></survey-result>
       </ul>
@@ -22,11 +23,13 @@ export default {
   },
   data() {
     return {
-      results: []
+      results: [],
+      isLoading: false,
     }
   },
   methods: {
     async loadExperiences() {
+      this.isLoading = true;
       const response = await fetch(
         `${process.env.VUE_APP_FIREBASE_URL}/surveys.json`, {
         headers: {
@@ -42,6 +45,7 @@ export default {
         })
       }
       console.log(this.results)
+      this.isLoading = false;
     }
   },
   mounted() {
