@@ -54,6 +54,8 @@ export default {
       //   rating: this.chosenRating,
       // });
       this.error = null;
+
+
       const response = await fetch(
         `${process.env.VUE_APP_FIREBASE_URL}/surveys.json`,
         {
@@ -65,9 +67,22 @@ export default {
             name: this.enteredName,
             rating: this.chosenRating
           })
-        }).then(res => res.json())
-        .catch(() => {
-          this.error = 'Something went wrong, please try again later.';
+        })
+        .then(async (response) => {
+          if (response.ok) {
+            return response.json();
+          }
+          else {
+            throw new Error('Could not save data');
+          }
+        })
+
+        .catch((err) => {
+          console.log(err);
+          if (err.message === 'Could not save data') {
+            this.error = err.message;
+          } else
+            this.error = 'Something went wrong, please try again later.';
         })
       console.log(response);
       this.enteredName = '';
